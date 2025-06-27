@@ -9,7 +9,7 @@ import bcrypt from 'bcrypt';
 import usuariosModel from '../models/usuarios.model.js'; // Importar bcrypt para hashear contraseñas
 
 const controller = {
-    // Listar todos los usuarios
+    // Obtener todos los Usuarios
     listarUsuarios: (req, res) => {
         usuarioController.obtenerUsuarios((err, resultados) => {
             if (err) return res.status(500).send(err);
