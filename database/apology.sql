@@ -1,3 +1,7 @@
+/*
+En este archivo se definen las operaciones de la base de datos.
+*/
+
 /* Crear la base de datos */
 CREATE DATABASE IF NOT EXISTS apology;
 
@@ -126,3 +130,14 @@ CREATE TABLE estudiante_grupo (
     FOREIGN KEY (estudiante_id) REFERENCES usuario(id),
     FOREIGN KEY (grupo_id) REFERENCES grupo(id)
 );
+
+/* Verificar y agregar la columna resetPasswordToken si no existe */
+ALTER TABLE usuario 
+ADD COLUMN IF NOT EXISTS resetPasswordToken VARCHAR(255) DEFAULT NULL;
+
+/* Verificar y agregar la columna resetPasswordExpires si no existe */
+ALTER TABLE usuario 
+ADD COLUMN IF NOT EXISTS resetPasswordExpires DATETIME DEFAULT NULL;
+
+/* Verificar que las columnas se hayan agregado */
+DESCRIBE usuario;

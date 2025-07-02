@@ -1,5 +1,7 @@
 /* Controlador de autenticación
-En este archivo se definen las operaciones de autenticación
+En este archivo se definen las operaciones de autenticación.
+Este código sirve para que el usuario pueda iniciar sesión, verificar si un correo existe,
+solicitar recuperación de contraseña, validar el token de recuperación y restablecer la contraseña.
 */
 
 import bcrypt from 'bcrypt'; // Importar bcrypt para la comparación de contraseñas
@@ -119,6 +121,181 @@ const authController = {
                     rol: usuario.rol
                 });
             });
+        });
+    },
+
+    // Función para verificar si un correo existe
+    checkEmail: function(req, res) {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ mensaje: 'El correo es requerido' });
+        }
+
+        connection.query('SELECT id, correo FROM usuario WHERE correo = ?', [email], (err, results) => {
+            if (err) {
+                console.error('Error al verificar el correo:', err);
+                return res.status(500).json({ mensaje: 'Error del servidor al verificar el correo' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ mensaje: 'Este correo electrónico no se encuentra registrado' });
+            }
+
+            res.status(200).json({ 
+                mensaje: 'Correo verificado exitosamente',
+                email: results[0].correo
+            });
+        });
+    },
+
+    // Función para generar token de recuperación
+    forgotPassword: function(req, res) {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ mensaje: 'El correo es requerido' });
+        }
+
+        // Verificar si el usuario existe
+        connection.query('SELECT id, correo FROM usuario WHERE correo = ?', [email], (err, results) => {
+            if (err) {
+                console.error('Error al buscar usuario:', err);
+                return res.status(500).json({ mensaje: 'Error del servidor' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ mensaje: 'Este correo electrónico no se encuentra registrado' });
+            }
+
+            const user = results[0];
+            
+            // Generar token de recuperación (válido por 1 hora)
+            const token = jwt.sign(
+                { userId: user.id, email: user.correo },
+                process.env.JWT_SECRET || 'tu_clave_secreta',
+                { expiresIn: '1h' }
+            );
+
+            // Guardar el token en la base de datos
+            const expiresAt = new Date(Date.now() + 3600000); // 1 hora a partir de ahora
+            
+            connection.query(
+                'UPDATE usuario SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id = ?',
+                [token, expiresAt, user.id],
+                (err) => {
+                    if (err) {
+                        console.error('Error al guardar el token de recuperación:', err);
+                        return res.status(500).json({ mensaje: 'Error al generar el token de recuperación' });
+                    }
+
+                    res.status(200).json({ 
+                        mensaje: 'Token generado exitosamente',
+                        token: token
+                    });
+                }
+            );
+        });
+    },
+
+    // Función para validar el token de recuperación
+    validateResetToken: function(req, res) {
+        const { token } = req.query;
+        
+        if (!token) {
+            return res.status(400).json({ mensaje: 'Token no proporcionado' });
+        }
+
+        // Verificar el token JWT
+        jwt.verify(token, process.env.JWT_SECRET || 'tu_clave_secreta', (jwtErr, decoded) => {
+            if (jwtErr) {
+                console.error('Error al verificar el token JWT:', jwtErr);
+                return res.status(401).json({ mensaje: 'Token inválido o expirado' });
+            }
+
+            // Verificar si el token existe en la base de datos y no ha expirado
+            connection.query(
+                'SELECT id, correo FROM usuario WHERE resetPasswordToken = ? AND resetPasswordExpires > ?',
+                [token, new Date()],
+                (err, results) => {
+                    if (err) {
+                        console.error('Error al verificar el token en la base de datos:', err);
+                        return res.status(500).json({ mensaje: 'Error al validar el token' });
+                    }
+
+                    if (results.length === 0) {
+                        return res.status(401).json({ mensaje: 'Token inválido o expirado' });
+                    }
+
+                    const user = results[0];
+                    res.status(200).json({ 
+                        mensaje: 'Token válido',
+                        email: user.correo
+                    });
+                }
+            );
+        });
+    },
+
+    resetPassword: function(req, res) {
+        const { token, newPassword } = req.body;
+        
+        if (!token || !newPassword) {
+            return res.status(400).json({ mensaje: 'Token y nueva contraseña son requeridos' });
+        }
+    
+        if (newPassword.length < 8) {
+            return res.status(400).json({ mensaje: 'La contraseña debe tener al menos 8 caracteres' });
+        }
+    
+        // Verificar el token JWT
+        jwt.verify(token, process.env.JWT_SECRET || 'tu_clave_secreta', (jwtErr, decoded) => {
+            if (jwtErr) {
+                console.error('Error al verificar el token JWT:', jwtErr);
+                return res.status(401).json({ mensaje: 'Token inválido o expirado' });
+            }
+    
+            // Verificar si el token existe en la base de datos y no ha expirado
+            connection.query(
+                'SELECT id, correo FROM usuario WHERE resetPasswordToken = ? AND resetPasswordExpires > ?',
+                [token, new Date()],
+                (err, results) => {
+                    if (err) {
+                        console.error('Error al buscar el token en la base de datos:', err);
+                        return res.status(500).json({ mensaje: 'Error al validar el token' });
+                    }
+    
+                    if (results.length === 0) {
+                        return res.status(401).json({ mensaje: 'Token inválido o expirado' });
+                    }
+    
+                    const user = results[0];
+                    
+                    // Hashear la nueva contraseña
+                    bcrypt.hash(newPassword, 10, (hashErr, hashedPassword) => {
+                        if (hashErr) {
+                            console.error('Error al hashear la contraseña:', hashErr);
+                            return res.status(500).json({ mensaje: 'Error al procesar la contraseña' });
+                        }
+    
+                        // Actualizar la contraseña y limpiar el token
+                        connection.query(
+                            'UPDATE usuario SET contraseña = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id = ?',
+                            [hashedPassword, user.id],
+                            (updateErr) => {
+                                if (updateErr) {
+                                    console.error('Error al actualizar la contraseña:', updateErr);
+                                    return res.status(500).json({ mensaje: 'Error al actualizar la contraseña' });
+                                }
+    
+                                res.status(200).json({ 
+                                    mensaje: 'Contraseña actualizada exitosamente' 
+                                });
+                            }
+                        );
+                    });
+                }
+            );
         });
     }
 };

@@ -1,4 +1,8 @@
-// Controlador para manejar las operaciones relacionadas con grupos
+/* Controlador para manejar las operaciones relacionadas con grupos
+En este archivo se definen las operaciones de grupos.
+Este código sirve para que el usuario pueda iniciar sesión, verificar si un correo existe,
+solicitar recuperación de contraseña, validar el token de recuperación y restablecer la contraseña.
+*/
 
 import gruposModel from "../models/grupos.model.js";
 

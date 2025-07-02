@@ -1,7 +1,7 @@
-// Controlador de usuarios
-
-/*
-En este archivo
+/* Controlador de usuarios
+En este archivo se definen las operaciones de usuarios.
+Este código sirve para que el usuario pueda iniciar sesión, verificar si un correo existe,
+solicitar recuperación de contraseña, validar el token de recuperación y restablecer la contraseña.
 */
 
 import usuarioController from "../models/usuarios.model.js"; // Importar el controlador de usuarios
