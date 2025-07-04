@@ -1,19 +1,54 @@
-// Modelo de grupos y asignaciones de estudiantes
+// Modelo para manejar operaciones relacionadas con grupos, grados y estudiantes
 
 import db from "../config/db.js";
 
 const gruposModel = {
-    // Obtener todos los grupos con información del grado
-    obtenerGrupos: (callback) => {
+    // Obtener todos los grados
+    obtenerGrados: (callback) => {
         const query = `
-            SELECT g.id, g.nombre, gr.nombre as grado_nombre 
-            FROM grupo g
-            JOIN grado gr ON g.grado_id = gr.id
-            ORDER BY gr.id, g.nombre`;
+            SELECT id, nombre 
+            FROM grado 
+            ORDER BY id`;
             
         db.query(query, (err, results) => {
             if (err) {
-                console.error('Error al obtener grupos:', err);
+                console.error('Error al obtener grados:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    // Obtener grupos por grado
+    obtenerGruposPorGrado: (gradoId, callback) => {
+        const query = `
+            SELECT id, nombre 
+            FROM grupo 
+            WHERE grado_id = ?
+            ORDER BY nombre`;
+            
+        db.query(query, [gradoId], (err, results) => {
+            if (err) {
+                console.error('Error al obtener grupos por grado:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    // Obtener estudiantes por grupo
+    obtenerEstudiantesPorGrupo: (grupoId, callback) => {
+        const query = `
+            SELECT u.id, u.documento, u.nombres, u.apellidos, u.correo, u.rol, u.telefono, u.estado
+            FROM usuario u
+            JOIN estudiante_grupo eg ON u.id = eg.estudiante_id
+            JOIN grupo g ON eg.grupo_id = g.id
+            WHERE eg.grupo_id = ? AND u.rol = 'Estudiante'
+            ORDER BY u.apellidos, u.nombres`;
+            
+        db.query(query, [grupoId], (err, results) => {
+            if (err) {
+                console.error('Error al obtener estudiantes del grupo:', err);
                 return callback(err);
             }
             callback(null, results);

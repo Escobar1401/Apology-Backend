@@ -6,14 +6,59 @@ solicitar recuperación de contraseña, validar el token de recuperación y rest
 
 import gruposModel from "../models/grupos.model.js";
 
-const gruposController = {
-    // Obtener todos los grupos
-    listarGrupos: (req, res) => {
-        gruposModel.obtenerGrupos((err, results) => {
+// Controlador para manejar las operaciones relacionadas con grupos
+export default {
+    // Obtener todos los grados
+    listarGrados: (req, res) => {
+        gruposModel.obtenerGrados((err, results) => {
             if (err) {
-                console.error('Error al obtener grupos:', err);
+                console.error('Error al obtener grados:', err);
                 return res.status(500).json({
-                    mensaje: 'Error al obtener los grupos',
+                    mensaje: 'Error al obtener los grados',
+                    error: err
+                });
+            }
+            res.json(results);
+        });
+    },
+
+    // Obtener grupos por grado
+    obtenerGruposPorGrado: (req, res) => {
+        const { gradoId } = req.params;
+        
+        if (!gradoId) {
+            return res.status(400).json({
+                mensaje: 'Se requiere el ID del grado'
+            });
+        }
+        
+        gruposModel.obtenerGruposPorGrado(gradoId, (err, results) => {
+            if (err) {
+                console.error('Error al obtener grupos por grado:', err);
+                return res.status(500).json({
+                    mensaje: 'Error al obtener los grupos del grado',
+                    error: err
+                });
+            }
+            res.json(results);
+        });
+    },
+
+    // Obtener estudiantes por grupo
+    obtenerEstudiantesPorGrupo: (req, res) => {
+        const { grupoId } = req.params;
+        
+        if (!grupoId) {
+            return res.status(400).json({
+                mensaje: 'Se requiere el ID del grupo'
+            });
+        }
+        
+        gruposModel.obtenerEstudiantesPorGrupo(grupoId, (err, results) => {
+            if (err) {
+                console.error('Error al obtener estudiantes del grupo:', err);
+                return res.status(500).json({
+                    mensaje: 'Error al obtener los estudiantes del grupo',
                     error: err
                 });
             }
@@ -67,5 +112,3 @@ const gruposController = {
         });
     }
 };
-
-export default gruposController;
