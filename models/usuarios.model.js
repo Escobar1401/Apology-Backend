@@ -74,6 +74,16 @@ const usuariosModel = {
             callback(null, [usuario]);
         });
     },
+    obtenerUsuarioPorRol: (rol, callback) => {
+        const query = "SELECT * FROM usuario WHERE rol = ?";
+        db.query(query, [rol], (err, results) => {
+            if (err) {
+                console.error('Error al obtener usuario por rol:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
     crearUsuario: (usuario, callback) => {
         db.query("INSERT INTO usuario SET ?", usuario, (err, results) => {
             if (err) {

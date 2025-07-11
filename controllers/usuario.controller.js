@@ -27,6 +27,16 @@ const controller = {
         });
     },
 
+    // Obtener un usuario por Rol
+    obtenerUsuarioPorRol: (req, res) => {
+        const rol = req.params.rol;
+        usuarioController.obtenerUsuarioPorRol(rol, (err, filas) => {
+            if (err) return res.status(500).json(err);
+            if (filas.length === 0) return res.status(404).json({ mensaje: 'No encontrada' });
+            res.json(filas);
+        });
+    },
+
     // Crear un nuevo usuario
     crearUsuario: (req, res) => {
         const datos = req.body;

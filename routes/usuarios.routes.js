@@ -13,6 +13,7 @@ const router = express.Router(); // Crear un enrutador
 
 router.get('/', controller.listarUsuarios);
 router.get('/:id', controller.obtenerUsuario);
+router.get('/rol/:rol', controller.obtenerUsuarioPorRol);
 router.post('/', validarUsuario, controller.crearUsuario);
 router.put('/:id', validarUsuario, controller.actualizarUsuario);
 router.patch('/:id', validarCambioContraseña, controller.cambiarContraseña);

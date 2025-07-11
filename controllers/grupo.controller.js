@@ -8,6 +8,21 @@ import gruposModel from "../models/grupos.model.js";
 
 // Controlador para manejar las operaciones relacionadas con grupos
 export default {
+
+    // Obtener todos los grupos
+    listarGrupos: (req, res) => {
+        gruposModel.obtenerGrupos((err, results) => {
+            if (err) {
+                console.error('Error al obtener grupos:', err);
+                return res.status(500).json({
+                    mensaje: 'Error al obtener los grupos',
+                    error: err
+                });
+            }
+            res.json(results);
+        });
+    },
+    
     // Obtener todos los grados
     listarGrados: (req, res) => {
         gruposModel.obtenerGrados((err, results) => {

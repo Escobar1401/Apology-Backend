@@ -3,13 +3,29 @@
 import db from "../config/db.js";
 
 const gruposModel = {
+    // Obtener todos los grupos
+    obtenerGrupos: (callback) => {
+        const query = `
+        SELECT id, nombre 
+        FROM grupo 
+        ORDER BY id
+    `;
+        db.query(query, (err, results) => {
+            if (err) {
+                console.error('Error al obtener grupos:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    }   ,
+
     // Obtener todos los grados
     obtenerGrados: (callback) => {
         const query = `
             SELECT id, nombre 
             FROM grado 
             ORDER BY id`;
-            
+
         db.query(query, (err, results) => {
             if (err) {
                 console.error('Error al obtener grados:', err);
@@ -26,7 +42,7 @@ const gruposModel = {
             FROM grupo 
             WHERE grado_id = ?
             ORDER BY nombre`;
-            
+
         db.query(query, [gradoId], (err, results) => {
             if (err) {
                 console.error('Error al obtener grupos por grado:', err);
@@ -45,7 +61,7 @@ const gruposModel = {
             JOIN grupo g ON eg.grupo_id = g.id
             WHERE eg.grupo_id = ? AND u.rol = 'Estudiante'
             ORDER BY u.apellidos, u.nombres`;
-            
+
         db.query(query, [grupoId], (err, results) => {
             if (err) {
                 console.error('Error al obtener estudiantes del grupo:', err);
