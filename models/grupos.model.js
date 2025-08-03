@@ -5,19 +5,20 @@ import db from "../config/db.js";
 const gruposModel = {
     // Obtener todos los grupos
     obtenerGrupos: (callback) => {
-        const query = `
-        SELECT id, nombre 
-        FROM grupo 
-        ORDER BY id
+    const query = `
+        SELECT g.id, g.nombre, gr.nombre AS grado_nombre
+        FROM grupo g
+        JOIN grado gr ON g.grado_id = gr.id
+        ORDER BY g.id
     `;
-        db.query(query, (err, results) => {
-            if (err) {
-                console.error('Error al obtener grupos:', err);
-                return callback(err);
-            }
-            callback(null, results);
-        });
-    }   ,
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener grupos:', err);
+            return callback(err);
+        }
+        callback(null, results);
+    });
+},
 
     // Obtener todos los grados
     obtenerGrados: (callback) => {

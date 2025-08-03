@@ -118,6 +118,36 @@ const usuariosModel = {
         values.push(id);
         const sql = `UPDATE usuario SET ${sets.join(', ')} WHERE id = ?`;
         db.query(sql, values, callback);
+    },
+    // Asignar estudiante a tutor legal
+    asignarEstudianteTutorLegal: (tutorId, estudianteId, callback) => {
+        const query = `INSERT INTO estudiante_tutor (estudiante_id, tutor_legal_id)
+                       VALUES (?, ?)
+                       ON DUPLICATE KEY UPDATE tutor_legal_id = VALUES(tutor_legal_id)`;
+        db.query(query, [estudianteId, tutorId], (err, results) => {
+            if (err) {
+                console.error('Error al asignar estudiante a tutor:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    // Obtener tutor legal de un estudiante
+    obtenerTutorLegalDeEstudiante: (estudianteId, callback) => {
+        const query = `
+            SELECT u.*
+            FROM estudiante_tutor et
+            JOIN usuario u ON et.tutor_legal_id = u.id
+            WHERE et.estudiante_id = ?
+        `;
+        db.query(query, [estudianteId], (err, results) => {
+            if (err) {
+                console.error('Error al obtener tutor legal del estudiante:', err);
+                return callback(err);
+            }
+            callback(null, results);
+        });
     }
 };
 

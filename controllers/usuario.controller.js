@@ -1,12 +1,21 @@
 /* Controlador de usuarios
-En este archivo se definen las operaciones de usuarios.
-Este código sirve para que el usuario pueda iniciar sesión, verificar si un correo existe,
-solicitar recuperación de contraseña, validar el token de recuperación y restablecer la contraseña.
+Este es el controlador de usuarios.
+
+Funcionalidades:
+- Listar todos los usuarios
+- Obtener un usuario por ID
+- Obtener un usuario por Rol
+- Crear un nuevo usuario
+- Actualizar un usuario
+- Cambiar la contraseña de un usuario
+- Actualizar solo correo y/o teléfono de un usuario
+- Buscar estudiantes
+- Asignar estudiante a tutor legal
 */
 
 import usuarioController from "../models/usuarios.model.js"; // Importar el controlador de usuarios
-import bcrypt from 'bcrypt';
-import usuariosModel from '../models/usuarios.model.js'; // Importar bcrypt para hashear contraseñas
+import bcrypt from 'bcrypt'; // Importar bcrypt para hashear contraseñas
+import usuariosModel from '../models/usuarios.model.js'; 
 
 const controller = {
     // Obtener todos los Usuarios
@@ -190,17 +199,19 @@ const controller = {
 
     // Asignar estudiante a tutor
     asignarEstudianteATutor: (req, res) => {
-        const tutorId = req.params.id;
-        const { estudiante_id } = req.body;
+        console.log('Cuerpo de la solicitud recibida:', req.body);
+        const { tutor_id, estudiante_id } = req.body;
 
-        if (!estudiante_id) {
+        if (!tutor_id || !estudiante_id) {
+            console.error('Faltan parámetros requeridos:', { tutor_id, estudiante_id });
             return res.status(400).json({ 
-                mensaje: 'El ID del estudiante es requerido' 
+                status: 'error',
+                mensaje: 'Se requieren tanto el ID del tutor como el ID del estudiante' 
             });
         }
 
         // Verificar que el tutor existe y es un TutorLegal
-        usuariosModel.obtenerUsuarioPorId(tutorId, (err, tutor) => {
+        usuariosModel.obtenerUsuarioPorId(tutor_id, (err, tutor) => {
             if (err || !tutor || tutor.length === 0) {
                 return res.status(404).json({ 
                     mensaje: 'Tutor no encontrado' 
@@ -228,8 +239,8 @@ const controller = {
                 }
 
                 // Asignar estudiante al tutor
-                usuariosModel.asignarEstudianteATutor(
-                    tutorId, 
+                usuariosModel.asignarEstudianteTutorLegal(
+                    tutor_id, 
                     estudiante_id, 
                     (err, resultado) => {
                         if (err) {
@@ -242,7 +253,7 @@ const controller = {
                         
                         res.status(201).json({ 
                             mensaje: 'Estudiante asignado al tutor exitosamente',
-                            tutor_id: tutorId,
+                            tutor_id: tutor_id,
                             estudiante_id: estudiante_id
                         });
                     }
@@ -259,6 +270,27 @@ const controller = {
             res.json({ mensaje: 'Eliminado con éxito' });
         });
     },
+
+    // Obtener el Tutor Legal de un Estudiante
+    obtenerTutorLegalDeEstudiante: (req, res) => {
+        const estudianteId = req.params.id;
+        usuariosModel.obtenerTutorLegalDeEstudiante(estudianteId, (err, tutor) => {
+            if (err) {
+                console.error('Error en obtenerTutorLegalDeEstudiante:', err);
+                return res.status(500).json({ 
+                    mensaje: 'Error al obtener el tutor legal', 
+                    error: err.message 
+                });
+            }
+            if (!tutor || tutor.length === 0) {
+                return res.status(404).json({ 
+                    mensaje: 'No se encontró un tutor legal asignado para este estudiante' 
+                });
+            }
+            res.json(tutor[0]);
+        });
+    },
+
 };
 
 export default controller;

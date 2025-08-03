@@ -13,10 +13,20 @@ import authRouter from './routes/login.js'; // Importar el enrutador de autentic
 const app = express(); // Crear una instancia de express
 const puerto = process.env.PORT || 3000; // Definir el puerto
 
-// Middlewares
-app.use(express.json());
+// Middleware configuration
 app.use(cors());
+
+// Handle JSON bodies
+app.use(express.json());
+
+// Handle URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the 'public' directory
+app.use('/uploads', express.static('public/uploads'));
 app.use(express.static('public'));
+
+// Auth routes
 app.use('/api/auth', authRouter);
 
 // Root route
@@ -26,6 +36,7 @@ app.get('/', (req, res) => {
         message: 'Bienvenido a la API de Apology',
         endpoints: {
             usuarios: '/api/usuarios',
+            materias: '/api/materias',
             grupos: '/api/grupos',
             login: '/api/login',
             email: '/api/email',
@@ -38,11 +49,15 @@ app.get('/', (req, res) => {
 import usuariosRoutes from './routes/usuarios.routes.js'; // Importar el enrutador de usuarios
 import gruposRoutes from './routes/grupos.routes.js'; // Importar el enrutador de grupos
 import emailRoutes from './routes/email.routes.js'; // Importar el enrutador de correos
+import materiasRoutes from './routes/materias.routes.js'; // Importar el enrutador de materias
+import justificacionesRoutes from './routes/justificaciones.routes.js'; // Importar el enrutador de justificaciones
 
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/materias', materiasRoutes);
 app.use('/api/grupos', gruposRoutes);
 app.use('/api/login', loginRouter);
 app.use('/api/email', emailRoutes);
+app.use('/api/justificaciones', justificacionesRoutes);
 
 // Manejo de errores
 app.use((req, res) => { 

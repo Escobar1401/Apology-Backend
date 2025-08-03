@@ -141,3 +141,49 @@ ADD COLUMN IF NOT EXISTS resetPasswordExpires DATETIME DEFAULT NULL;
 
 /* Verificar que las columnas se hayan agregado */
 DESCRIBE usuario;
+
+-- Asegurarse de que estás usando la base de datos correcta
+USE apology;
+
+-- Crear la tabla de relación estudiante-tutor si no existe
+CREATE TABLE IF NOT EXISTS estudiante_tutor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    estudiante_id INT NOT NULL,
+    tutor_legal_id INT NOT NULL,
+    fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    FOREIGN KEY (estudiante_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (tutor_legal_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_estudiante_tutor (estudiante_id, tutor_legal_id)
+);
+
+-- Agregar índice para mejorar el rendimiento en búsquedas
+CREATE INDEX IF NOT EXISTS idx_estudiante_id ON estudiante_tutor(estudiante_id);
+CREATE INDEX IF NOT EXISTS idx_tutor_legal_id ON estudiante_tutor(tutor_legal_id);
+
+-- Crear la tabla de materias si no existe
+CREATE TABLE IF NOT EXISTS materias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_nombre (nombre)
+);
+
+-- Insertar materias
+INSERT IGNORE INTO materias (nombre) VALUES
+('Matemáticas'),
+('Lengua Castellana'),
+('Ciencias Naturales'),
+('Ciencias Sociales'),
+('Inglés'),
+('Educación Física'),
+('Educación Artística'),
+('Ética y Valores'),
+('Tecnología e Informática'),
+('Filosofía'),
+('Química'),
+('Física'),
+('Biología'),
+('Educación Religiosa'),
+('Emprendimiento'),
+('Ciencias Políticas');
