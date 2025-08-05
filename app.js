@@ -48,16 +48,16 @@ app.get('/', (req, res) => {
 // Rutas
 import usuariosRoutes from './routes/usuarios.routes.js'; // Importar el enrutador de usuarios
 import gruposRoutes from './routes/grupos.routes.js'; // Importar el enrutador de grupos
+import justificacionesRoutes from './routes/justificaciones.routes.js'; // Importar el enrutador de justificaciones
 import emailRoutes from './routes/email.routes.js'; // Importar el enrutador de correos
 import materiasRoutes from './routes/materias.routes.js'; // Importar el enrutador de materias
-import justificacionesRoutes from './routes/justificaciones.routes.js'; // Importar el enrutador de justificaciones
 
-app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/usuarios', usuariosRoutes); // Usar el enrutador de usuarios
 app.use('/api/materias', materiasRoutes);
-app.use('/api/grupos', gruposRoutes);
+app.use('/api/grupos', gruposRoutes); // Usar el enrutador de grupos
 app.use('/api/login', loginRouter);
 app.use('/api/email', emailRoutes);
-app.use('/api/justificaciones', justificacionesRoutes);
+app.use('/api/justificaciones', justificacionesRoutes); // Usar el enrutador de justificaciones
 
 // Manejo de errores
 app.use((req, res) => { 
