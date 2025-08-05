@@ -3,6 +3,7 @@ Este es el controlador de justificaciones
 */
 
 import justificacionModel from "../models/justificaciones.model.js"; // Importar el modelo de justificaciones
+import db from "../config/db.js"; // Importar la conexión a la base de datos
 
 const controller = {
     // Listar todas las justificaciones
@@ -75,30 +76,60 @@ const controller = {
 
             console.log('Saving to database:', justificacionData);
             
-            // Guardar en la base de datos
-            justificacionModel.crearJustificacion(justificacionData, (err, resultados) => {
-                if (err) {
-                    console.error('Error al guardar en la base de datos:', err);
-                    return res.status(500).json({ 
-                        error: 'Error al guardar la justificación en la base de datos',
-                        details: err.message,
-                        code: err.code
+            // Primero, obtener el ID del tutor legal del estudiante
+            const getTutorQuery = 'SELECT tutor_legal_id FROM estudiante_tutor WHERE estudiante_id = ? LIMIT 1';
+            
+            db.query(getTutorQuery, [estudiante_id], (err, tutorResults) => {
+                try {
+                    if (err) {
+                        console.error('Error al obtener el tutor legal:', err);
+                        return res.status(500).json({
+                            error: 'Error al obtener la información del tutor',
+                            details: err.message
+                        });
+                    }
+                    
+                    // Si se encontró un tutor, agregar el ID a los datos de la justificación
+                    if (tutorResults && tutorResults.length > 0) {
+                        justificacionData.tutor_legal_id = tutorResults[0].tutor_legal_id;
+                        console.log('Tutor legal encontrado:', justificacionData.tutor_legal_id);
+                    } else {
+                        console.warn('No se encontró un tutor legal para el estudiante:', estudiante_id);
+                    }
+                    
+                    // Guardar en la base de datos
+                    justificacionModel.crearJustificacion(justificacionData, (err, resultados) => {
+                        if (err) {
+                            console.error('Error al guardar en la base de datos:', err);
+                            return res.status(500).json({ 
+                                error: 'Error al guardar la justificación en la base de datos',
+                                details: err.message,
+                                code: err.code
+                            });
+                        }
+                        
+                        console.log('Justificación guardada exitosamente:', resultados);
+                        
+                        res.status(201).json({
+                            success: true,
+                            message: 'Justificación creada exitosamente',
+                            data: {
+                                id: resultados.insertId,
+                                ...justificacionData
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error en crearJustificacion:', error);
+                    res.status(500).json({
+                        error: 'Error al procesar la solicitud',
+                        details: error.message,
+                        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
                     });
                 }
-                
-                console.log('Justificación guardada exitosamente:', resultados);
-                
-                res.status(201).json({
-                    success: true,
-                    message: 'Justificación creada exitosamente',
-                    data: {
-                        id: resultados.insertId,
-                        ...justificacionData
-                    }
-                });
             });
         } catch (error) {
-            console.error('Error en crearJustificacion:', error);
+            console.error('Error en crearJustificacion (sincrónico):', error);
             res.status(500).json({
                 error: 'Error al procesar la solicitud',
                 details: error.message,
