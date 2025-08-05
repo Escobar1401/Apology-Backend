@@ -2,12 +2,12 @@
 Este es el controlador de justificaciones
 */
 
-import justificacionController from "../models/justificaciones.model.js"; // Importar el controlador de justificaciones
+import justificacionModel from "../models/justificaciones.model.js"; // Importar el modelo de justificaciones
 
 const controller = {
     // Listar todas las justificaciones
     listarJustificaciones: (req, res) => {
-        justificacionController.obtenerJustificaciones((err, resultados) => {
+        justificacionModel.obtenerJustificaciones((err, resultados) => {
             if (err) return res.status(500).send(err);
             res.json(resultados);
         });
@@ -16,7 +16,7 @@ const controller = {
     // Listar una justificacion por ID
     obtenerJustificacion: (req, res) => {
         const id = req.params.id;
-        justificacionController.obtenerJustificacion(id, (err, resultados) => {
+        justificacionModel.obtenerJustificacionPorId(id, (err, resultados) => {
             if (err) return res.status(500).send(err);
             res.json(resultados);
         });
@@ -57,21 +57,20 @@ const controller = {
             
             // Preparar los datos para la base de datos
             const justificacionData = {
-                estudiante_id,
-                fecha_inasistencia: new Date(fecha_inasistencia),
-                materias: materiasArray,
+                estudiante_id: parseInt(estudiante_id),
+                fecha_ausencia: new Date(fecha_inasistencia),
+                materias_afectadas: JSON.stringify(materiasArray), // Store as JSON string
                 motivo,
-                estado: 'pendiente', // Estado inicial
-                fecha_solicitud: new Date(),
-                descripcion_adicional: descripcion_adicional || null
+                otro_motivo: motivo === 'Otro' ? descripcion_adicional : null,
+                estado: 'Pendiente', // Must match enum in DB
+                fecha_creacion: new Date(),
+                fecha_actualizacion: new Date()
             };
 
             // Si hay un archivo adjunto, guardar la ruta
             if (req.file) {
                 console.log('Processing file upload:', req.file);
-                justificacionData.archivo_url = `/uploads/${req.file.filename}`;
-                justificacionData.tipo_archivo = req.file.mimetype;
-                justificacionData.nombre_archivo = req.file.originalname;
+                justificacionData.archivo_adjunto = `/uploads/${req.file.filename}`;
             }
 
             console.log('Saving to database:', justificacionData);
@@ -112,7 +111,7 @@ const controller = {
     actualizarJustificacion: (req, res) => {
         const id = req.params.id;
         const datos = req.body;
-        justificacionController.actualizarJustificacion(id, datos, (err, resultados) => {
+        justificacionModel.actualizarJustificacion(id, datos, (err, resultados) => {
             if (err) return res.status(500).send(err);
             res.json(resultados);
         });
@@ -121,7 +120,7 @@ const controller = {
     // Eliminar una justificacion
     eliminarJustificacion: (req, res) => {
         const id = req.params.id;
-        justificacionController.eliminarJustificacion(id, (err, resultados) => {
+        justificacionModel.eliminarJustificacion(id, (err, resultados) => {
             if (err) return res.status(500).send(err);
             res.json(resultados);
         });

@@ -6,7 +6,7 @@ import db from "../config/db.js";
 
 const justificacionesModel = {
     obtenerJustificaciones: (callback) => {
-        const query = "SELECT * FROM justificacion";
+        const query = "SELECT * FROM justificaciones";
         db.query(query, (err, results) => {
             if (err) {
                 console.error('Error al obtener justificaciones:', err);
@@ -16,7 +16,7 @@ const justificacionesModel = {
         });
     },
     obtenerJustificacionPorId: (id, callback) => {
-        const query = "SELECT * FROM justificacion WHERE id = ?";
+        const query = "SELECT * FROM justificaciones WHERE id = ?";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error('Error al obtener justificacion por ID:', err);
@@ -26,7 +26,7 @@ const justificacionesModel = {
         });
     },
     crearJustificacion: (justificacion, callback) => {
-        const query = "INSERT INTO justificacion SET ?";
+        const query = "INSERT INTO justificaciones SET ?";
         db.query(query, justificacion, (err, results) => {
             if (err) {
                 console.error('Error al crear justificacion:', err);
@@ -36,7 +36,7 @@ const justificacionesModel = {
         });
     },
     actualizarJustificacion: (id, justificacion, callback) => {
-        const query = "UPDATE justificacion SET ? WHERE id = ?";
+        const query = "UPDATE justificaciones SET ? WHERE id = ?";
         db.query(query, [justificacion, id], (err, results) => {
             if (err) {
                 console.error('Error al actualizar justificacion:', err);
@@ -46,7 +46,7 @@ const justificacionesModel = {
         });
     },
     eliminarJustificacion: (id, callback) => {
-        const query = "DELETE FROM justificacion WHERE id = ?";
+        const query = "DELETE FROM justificaciones WHERE id = ?";
         db.query(query, [id], (err, results) => {
             if (err) {
                 console.error('Error al eliminar justificacion:', err);
