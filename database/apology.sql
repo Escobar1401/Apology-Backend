@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-08-2025 a las 05:47:06
+-- Tiempo de generación: 05-08-2025 a las 07:18:12
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -148,6 +148,13 @@ CREATE TABLE `justificaciones` (
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `justificaciones`
+--
+
+INSERT INTO `justificaciones` (`id`, `estudiante_id`, `tutor_legal_id`, `fecha_ausencia`, `motivo`, `otro_motivo`, `materias_afectadas`, `archivo_adjunto`, `estado`, `observaciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 2, NULL, '2025-07-27', 'Enfermedad', NULL, '[4]', NULL, 'Pendiente', NULL, '2025-08-05 05:15:38', '2025-08-05 05:15:38');
 
 -- --------------------------------------------------------
 
@@ -299,7 +306,7 @@ ALTER TABLE `grupo`
 -- AUTO_INCREMENT de la tabla `justificaciones`
 --
 ALTER TABLE `justificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `materias`
