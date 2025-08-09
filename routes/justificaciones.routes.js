@@ -19,18 +19,18 @@ router.get('/:id', controller.obtenerJustificacion);
 
 // Middleware para manejar errores de multer
 const handleMulterError = (err, req, res, next) => {
-    if (err) {
-        console.error('Multer error:', err);
-        return res.status(400).json({
-            error: 'Error al procesar el archivo',
-            details: err.message
-        });
-    }
-    next();
+  if (err) {
+    console.error('Multer error:', err);
+    return res.status(400).json({
+      error: 'Error al procesar el archivo',
+      details: err.message
+    });
+  }
+  next();
 };
 
 // Crear una nueva justificacion con manejo de archivos
-router.post('/', 
+router.post('/',
   (req, res, next) => {
     console.log('Incoming request headers:', req.headers);
     console.log('Content-Type:', req.get('Content-Type'));
@@ -43,15 +43,15 @@ router.post('/',
     console.log('File:', req.file);
     next();
   },
-  validarJustificacion, 
+  validarJustificacion,
   controller.crearJustificacion
 );
 
 // Actualizar una justificacion
-router.put('/:id', 
+router.put('/:id',
   upload.single('archivo'),
   handleMulterError,
-  validarJustificacion, 
+  validarJustificacion,
   controller.actualizarJustificacion
 );
 
