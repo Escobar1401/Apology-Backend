@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-08-2025 a las 07:18:12
+-- Tiempo de generación: 11-08-2025 a las 20:20:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -37,7 +37,8 @@ CREATE TABLE `estudiante_grupo` (
 --
 
 INSERT INTO `estudiante_grupo` (`estudiante_id`, `grupo_id`) VALUES
-(2, 1);
+(2, 1),
+(5, 2);
 
 -- --------------------------------------------------------
 
@@ -57,7 +58,8 @@ CREATE TABLE `estudiante_tutor` (
 --
 
 INSERT INTO `estudiante_tutor` (`id`, `estudiante_id`, `tutor_legal_id`, `fecha_asignacion`) VALUES
-(1, 2, 4, '2025-08-03 01:00:52');
+(1, 2, 4, '2025-08-03 01:00:52'),
+(2, 5, 6, '2025-08-11 18:18:30');
 
 -- --------------------------------------------------------
 
@@ -154,7 +156,9 @@ CREATE TABLE `justificaciones` (
 --
 
 INSERT INTO `justificaciones` (`id`, `estudiante_id`, `tutor_legal_id`, `fecha_ausencia`, `motivo`, `otro_motivo`, `materias_afectadas`, `archivo_adjunto`, `estado`, `observaciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 2, NULL, '2025-07-27', 'Enfermedad', NULL, '[4]', NULL, 'Pendiente', NULL, '2025-08-05 05:15:38', '2025-08-05 05:15:38');
+(1, 2, NULL, '2025-07-27', 'Enfermedad', NULL, '[4]', NULL, 'Pendiente', NULL, '2025-08-05 05:15:38', '2025-08-05 05:15:38'),
+(2, 2, NULL, '2025-07-28', 'Enfermedad', NULL, '[4,5]', NULL, 'Pendiente', NULL, '2025-08-05 12:04:26', '2025-08-05 12:04:26'),
+(3, 2, 4, '2025-07-27', 'Enfermedad', NULL, '[5,16]', NULL, 'Pendiente', NULL, '2025-08-05 12:20:42', '2025-08-05 12:20:42');
 
 -- --------------------------------------------------------
 
@@ -218,7 +222,9 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`id`, `documento`, `nombres`, `apellidos`, `telefono`, `correo`, `contraseña`, `rol`, `estado`, `intentosFallidos`, `resetPasswordToken`, `resetPasswordExpires`) VALUES
 (1, '0000000001', 'Usuario', 'Secretaria', '0000000001', 'u.secretaria@ieluiscarlosgalansarmiento.edu.co', '$2b$10$JJoB1HKGQw0mYWfmOL5SYuDt8qW7gmqqX0Vm8HJifg9SzzdtTicT.', 'Secretaria', 'Activo', 0, NULL, NULL),
 (2, '1000000001', 'Usuario Estudiante', 'Asignado', '1000000001', 'uaestudiante@ieluiscarlosgalansarmiento.edu.co', '$2b$10$U37hWka4Pj4tH6KI3rDWmutMKeReibyP9JKRSeVLWZw.K3Q6vjNiK', 'Estudiante', 'Activo', 0, NULL, NULL),
-(4, '2000000001', 'Usuario Tutor', 'Asignado', '2000000001', 'uatutor@ieluiscarlosgalansarmiento.edu.co', '$2b$10$7EfOf4DvkiVi4bX5JCbTT.EpPbCOFYmbjoF5X5cW5PUKcLIWRH5Y2', 'TutorLegal', 'Activo', 0, NULL, NULL);
+(4, '2000000001', 'Usuario Tutor', 'Asignado', '2000000001', 'uatutor@ieluiscarlosgalansarmiento.edu.co', '$2b$10$7EfOf4DvkiVi4bX5JCbTT.EpPbCOFYmbjoF5X5cW5PUKcLIWRH5Y2', 'TutorLegal', 'Activo', 0, NULL, NULL),
+(5, '1000000002', 'estudiante dos', 'asignado', '1000000002', 'eda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$upqsEFVaXArHcs3gbxsZn.ubm63l.aaasDXNidK6ygqjOWjZK1H9i', 'Estudiante', 'Activo', 0, NULL, NULL),
+(6, '2000000003', 'tutor dos', 'asignado', '2000000003', 'tda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$c2nMUXClPe6xpFSCpleBquUG44d.ctJfPj2z3lLBnnFTQgRmRcO3q', 'TutorLegal', 'Activo', 0, NULL, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -288,7 +294,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `estudiante_tutor`
 --
 ALTER TABLE `estudiante_tutor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `grado`
@@ -306,7 +312,7 @@ ALTER TABLE `grupo`
 -- AUTO_INCREMENT de la tabla `justificaciones`
 --
 ALTER TABLE `justificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `materias`
@@ -318,7 +324,7 @@ ALTER TABLE `materias`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
