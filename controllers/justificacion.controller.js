@@ -14,6 +14,40 @@ const controller = {
         });
     },
     
+    // Obtener justificaciones por ID de estudiante
+    obtenerJustificacionesPorEstudiante: (req, res) => {
+        const estudianteId = req.params.estudianteId;
+        if (!estudianteId) {
+            return res.status(400).json({ error: 'Se requiere el ID del estudiante' });
+        }
+        
+        const query = `
+            SELECT j.*, CONCAT(u.nombres, ' ', u.apellidos) as nombre_estudiante
+            FROM justificaciones j
+            JOIN usuario u ON j.estudiante_id = u.id
+            WHERE j.estudiante_id = ?
+            ORDER BY j.fecha_creacion DESC
+        `;
+        
+        db.query(query, [estudianteId], (err, resultados) => {
+            if (err) {
+                console.error('Error al obtener justificaciones del estudiante:', err);
+                return res.status(500).json({ 
+                    error: 'Error al obtener las justificaciones',
+                    details: err.message 
+                });
+            }
+            
+            // Parsear el campo materias_afectadas de JSON string a array
+            const justificaciones = resultados.map(justificacion => ({
+                ...justificacion,
+                materias_afectadas: JSON.parse(justificacion.materias_afectadas || '[]')
+            }));
+            
+            res.json(justificaciones);
+        });
+    },
+    
     // Listar una justificacion por ID
     obtenerJustificacion: (req, res) => {
         const id = req.params.id;
