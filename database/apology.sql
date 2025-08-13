@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-08-2025 a las 20:20:14
+-- Tiempo de generación: 13-08-2025 a las 22:52:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -220,7 +220,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `documento`, `nombres`, `apellidos`, `telefono`, `correo`, `contraseña`, `rol`, `estado`, `intentosFallidos`, `resetPasswordToken`, `resetPasswordExpires`) VALUES
-(1, '0000000001', 'Usuario', 'Secretaria', '0000000001', 'u.secretaria@ieluiscarlosgalansarmiento.edu.co', '$2b$10$JJoB1HKGQw0mYWfmOL5SYuDt8qW7gmqqX0Vm8HJifg9SzzdtTicT.', 'Secretaria', 'Activo', 0, NULL, NULL),
+(1, '0000000001', 'Usuario', 'Secretaria', '0000000001', 'u.secretaria@ieluiscarlosgalansarmiento.edu.co', '$2b$10$JJoB1HKGQw0mYWfmOL5SYuDt8qW7gmqqX0Vm8HJifg9SzzdtTicT.', 'Secretaria', 'Activo', 0, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidS5zZWNyZXRhcmlhQGllbHVpc2Nhcmxvc2dhbGFuc2FybWllbnRvLmVkdS5jbyIsImlhdCI6MTc1NDkzOTQ3MSwiZXhwIjoxNzU0OTQzMDcxfQ.bBXlWTvS7yFddl18shfZJwrLJDMj6EvwaVEEKjDO1hI', '2025-08-11 15:11:11'),
 (2, '1000000001', 'Usuario Estudiante', 'Asignado', '1000000001', 'uaestudiante@ieluiscarlosgalansarmiento.edu.co', '$2b$10$U37hWka4Pj4tH6KI3rDWmutMKeReibyP9JKRSeVLWZw.K3Q6vjNiK', 'Estudiante', 'Activo', 0, NULL, NULL),
 (4, '2000000001', 'Usuario Tutor', 'Asignado', '2000000001', 'uatutor@ieluiscarlosgalansarmiento.edu.co', '$2b$10$7EfOf4DvkiVi4bX5JCbTT.EpPbCOFYmbjoF5X5cW5PUKcLIWRH5Y2', 'TutorLegal', 'Activo', 0, NULL, NULL),
 (5, '1000000002', 'estudiante dos', 'asignado', '1000000002', 'eda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$upqsEFVaXArHcs3gbxsZn.ubm63l.aaasDXNidK6ygqjOWjZK1H9i', 'Estudiante', 'Activo', 0, NULL, NULL),
