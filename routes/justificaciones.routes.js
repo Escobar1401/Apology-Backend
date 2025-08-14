@@ -20,6 +20,9 @@ router.get('/:id', controller.obtenerJustificacion);
 // Obtener justificaciones por ID de estudiante
 router.get('/estudiante/:estudianteId', controller.obtenerJustificacionesPorEstudiante);
 
+// Actualizar una justificación
+router.put('/:id', controller.actualizarJustificacion);
+
 // Middleware para manejar errores de multer
 const handleMulterError = (err, req, res, next) => {
   if (err) {

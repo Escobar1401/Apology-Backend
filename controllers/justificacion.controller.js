@@ -26,7 +26,14 @@ const controller = {
             FROM justificaciones j
             JOIN usuario u ON j.estudiante_id = u.id
             WHERE j.estudiante_id = ?
-            ORDER BY j.fecha_creacion DESC
+            ORDER BY 
+                CASE j.estado 
+                    WHEN 'Pendiente' THEN 1
+                    WHEN 'Aprobada' THEN 2
+                    WHEN 'Rechazada' THEN 3
+                    ELSE 4
+                END,
+                j.fecha_creacion DESC
         `;
         
         db.query(query, [estudianteId], (err, resultados) => {
@@ -176,9 +183,27 @@ const controller = {
     actualizarJustificacion: (req, res) => {
         const id = req.params.id;
         const datos = req.body;
-        justificacionModel.actualizarJustificacion(id, datos, (err, resultados) => {
-            if (err) return res.status(500).send(err);
-            res.json(resultados);
+        
+        // Primero obtener el estado actual de la justificación
+        justificacionModel.obtenerJustificacionPorId(id, (err, justificacion) => {
+            if (err) return res.status(500).send({ error: 'Error al verificar el estado de la justificación' });
+            
+            if (!justificacion || justificacion.length === 0) {
+                return res.status(404).send({ error: 'Justificación no encontrada' });
+            }
+            
+            // Verificar si la justificación está en estado 'Pendiente'
+            if (justificacion[0].estado !== 'Pendiente') {
+                return res.status(400).send({ 
+                    error: 'Solo se pueden modificar justificaciones con estado Pendiente' 
+                });
+            }
+            
+            // Si está pendiente, proceder con la actualización
+            justificacionModel.actualizarJustificacion(id, datos, (err, resultados) => {
+                if (err) return res.status(500).send({ error: 'Error al actualizar la justificación' });
+                res.json(resultados);
+            });
         });
     },
     

@@ -6,7 +6,19 @@ import db from "../config/db.js";
 
 const justificacionesModel = {
     obtenerJustificaciones: (callback) => {
-        const query = "SELECT * FROM justificaciones";
+        const query = `
+            SELECT j.*, u.nombres AS estudiante_nombres, u.apellidos AS estudiante_apellidos
+            FROM justificaciones j
+            JOIN usuario u ON j.estudiante_id = u.id
+            ORDER BY 
+                CASE j.estado 
+                    WHEN 'Pendiente' THEN 1
+                    WHEN 'Aprobada' THEN 2
+                    WHEN 'Rechazada' THEN 3
+                    ELSE 4
+                END,
+                j.fecha_creacion DESC
+        `;
         db.query(query, (err, results) => {
             if (err) {
                 console.error('Error al obtener justificaciones:', err);
