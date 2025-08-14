@@ -8,7 +8,7 @@ Funcionalidades:
 - Crear una nueva materia
 - Actualizar una materia
 - Eliminar una materia
-*/
+*/ 
 
 import materiasModel from "../models/materias.model.js";
 
