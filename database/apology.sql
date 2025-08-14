@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-08-2025 a las 22:52:44
+-- Tiempo de generación: 14-08-2025 a las 21:35:36
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -156,7 +156,7 @@ CREATE TABLE `justificaciones` (
 --
 
 INSERT INTO `justificaciones` (`id`, `estudiante_id`, `tutor_legal_id`, `fecha_ausencia`, `motivo`, `otro_motivo`, `materias_afectadas`, `archivo_adjunto`, `estado`, `observaciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 2, NULL, '2025-07-27', 'Enfermedad', NULL, '[4]', NULL, 'Pendiente', NULL, '2025-08-05 05:15:38', '2025-08-05 05:15:38'),
+(1, 2, NULL, '2025-07-27', 'Enfermedad', NULL, '[4]', NULL, 'Aprobada', 'melo', '2025-08-05 05:15:38', '2025-08-14 00:56:43'),
 (2, 2, NULL, '2025-07-28', 'Enfermedad', NULL, '[4,5]', NULL, 'Pendiente', NULL, '2025-08-05 12:04:26', '2025-08-05 12:04:26'),
 (3, 2, 4, '2025-07-27', 'Enfermedad', NULL, '[5,16]', NULL, 'Pendiente', NULL, '2025-08-05 12:20:42', '2025-08-05 12:20:42');
 
