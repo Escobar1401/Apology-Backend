@@ -19,7 +19,7 @@ import usuariosModel from '../models/usuarios.model.js';
 
 const controller = {
     // Obtener todos los Usuarios
-    listarUsuarios: (req, res) => {
+    listarUsuarios: (req, res) => { 
         usuarioController.obtenerUsuarios((err, resultados) => {
             if (err) return res.status(500).send(err);
             res.json(resultados);
