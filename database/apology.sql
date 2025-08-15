@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-08-2025 a las 21:35:36
+-- Tiempo de generación: 15-08-2025 a las 05:27:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -197,6 +197,24 @@ INSERT INTO `materias` (`id`, `nombre`, `fecha_creacion`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `registro_asistencia`
+--
+
+CREATE TABLE `registro_asistencia` (
+  `id` int(11) NOT NULL,
+  `estudiante_id` int(11) NOT NULL,
+  `grupo_id` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `asistio` tinyint(1) DEFAULT 0 COMMENT '0: No asistió, 1: Asistió',
+  `justificacion_id` int(11) DEFAULT NULL COMMENT 'Referencia a la justificación si existe',
+  `registrado_por` int(11) NOT NULL COMMENT 'ID del usuario que registra (profesor)',
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuario`
 --
 
@@ -224,7 +242,8 @@ INSERT INTO `usuario` (`id`, `documento`, `nombres`, `apellidos`, `telefono`, `c
 (2, '1000000001', 'Usuario Estudiante', 'Asignado', '1000000001', 'uaestudiante@ieluiscarlosgalansarmiento.edu.co', '$2b$10$U37hWka4Pj4tH6KI3rDWmutMKeReibyP9JKRSeVLWZw.K3Q6vjNiK', 'Estudiante', 'Activo', 0, NULL, NULL),
 (4, '2000000001', 'Usuario Tutor', 'Asignado', '2000000001', 'uatutor@ieluiscarlosgalansarmiento.edu.co', '$2b$10$7EfOf4DvkiVi4bX5JCbTT.EpPbCOFYmbjoF5X5cW5PUKcLIWRH5Y2', 'TutorLegal', 'Activo', 0, NULL, NULL),
 (5, '1000000002', 'estudiante dos', 'asignado', '1000000002', 'eda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$upqsEFVaXArHcs3gbxsZn.ubm63l.aaasDXNidK6ygqjOWjZK1H9i', 'Estudiante', 'Activo', 0, NULL, NULL),
-(6, '2000000003', 'tutor dos', 'asignado', '2000000003', 'tda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$c2nMUXClPe6xpFSCpleBquUG44d.ctJfPj2z3lLBnnFTQgRmRcO3q', 'TutorLegal', 'Activo', 0, NULL, NULL);
+(6, '2000000003', 'tutor dos', 'asignado', '2000000003', 'tda@ieluiscarlosgalansarmiento.edu.co', '$2b$10$c2nMUXClPe6xpFSCpleBquUG44d.ctJfPj2z3lLBnnFTQgRmRcO3q', 'TutorLegal', 'Activo', 0, NULL, NULL),
+(7, '4000000001', 'Usuario', 'Profesor', '4000000001', 'u.profesor@ieluiscarlosgalansarmiento.edu.co', '$2b$10$r.Wp4yI/4NVaiAYCz76ZbuRQ6xKU3nX1t3MT7GxL2bSWtW11.ase.', 'Profesor', 'Activo', 0, NULL, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -278,6 +297,19 @@ ALTER TABLE `materias`
   ADD UNIQUE KEY `unique_nombre` (`nombre`);
 
 --
+-- Indices de la tabla `registro_asistencia`
+--
+ALTER TABLE `registro_asistencia`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_asistencia` (`estudiante_id`,`fecha`),
+  ADD KEY `idx_asistencia_estudiante` (`estudiante_id`),
+  ADD KEY `idx_asistencia_grupo` (`grupo_id`),
+  ADD KEY `idx_asistencia_fecha` (`fecha`),
+  ADD KEY `fk_asistencia_justificacion` (`justificacion_id`),
+  ADD KEY `fk_asistencia_registrado_por` (`registrado_por`),
+  ADD KEY `idx_asistencia_grupo_fecha` (`grupo_id`,`fecha`);
+
+--
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -321,10 +353,16 @@ ALTER TABLE `materias`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT de la tabla `registro_asistencia`
+--
+ALTER TABLE `registro_asistencia`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas
@@ -356,6 +394,15 @@ ALTER TABLE `grupo`
 ALTER TABLE `justificaciones`
   ADD CONSTRAINT `justificaciones_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `justificaciones_ibfk_2` FOREIGN KEY (`tutor_legal_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `registro_asistencia`
+--
+ALTER TABLE `registro_asistencia`
+  ADD CONSTRAINT `fk_asistencia_estudiante` FOREIGN KEY (`estudiante_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_asistencia_grupo` FOREIGN KEY (`grupo_id`) REFERENCES `grupo` (`id`),
+  ADD CONSTRAINT `fk_asistencia_justificacion` FOREIGN KEY (`justificacion_id`) REFERENCES `justificaciones` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_asistencia_registrado_por` FOREIGN KEY (`registrado_por`) REFERENCES `usuario` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
